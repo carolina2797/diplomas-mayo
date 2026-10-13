@@ -14,12 +14,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  // Positioned to line up with the blank line under "OTORGA EL PRESENTE
-  // DIPLOMA DE ASISTENCIA A:" in the current design. Calibrated against a
-  // grid overlay with the user (50% from the top).
+  // Positioned to sit on the gold line under "Otorga el presente DIPLOMA A"
+  // in the May event's design. Calibrated against a grid overlay (45.5% from
+  // the top — the line itself is at ~51%).
   name: {
     position: "absolute",
-    top: "50%",
+    top: "45.5%",
     left: 0,
     width: "100%",
     textAlign: "center",

@@ -92,8 +92,47 @@ Decisiones clave (heredadas del proyecto original):
   Sheet nueva y compartirla con la cuenta de servicio; poner su ID en `.env.local`;
   exportar los 24 fondos nuevos.
 
+### 2026-10-13 — Parte 2: Calibración del nombre y prueba de la Sheet
+
+- El usuario hizo el primer commit/push (`develop`), puso el ID de la Sheet nueva en
+  `.env.local` y colocó 3 de los 24 fondos (`background-general.png`,
+  `background-precongreso-PC4.png`, `background-precongreso-PC6.png`, todos
+  2000×1414 px). Los otros 21 vienen en camino.
+- Prueba de conexión a la Sheet: la autenticación de la cuenta de servicio funciona,
+  pero Google respondió "The caller does not have permission" — la Sheet nueva aún
+  no estaba compartida con la cuenta de servicio
+  (`diplomas-sheets-reader@diesel-air-468721-f1.iam.gserviceaccount.com`).
+- Calibración con una ruta de depuración temporal (cuadrícula cada 5% sobre el
+  diseño real, ya eliminada): en el diseño de mayo la línea dorada del nombre está a
+  ~51% desde arriba; con el 50% heredado el nombre tapaba el texto "Por su valiosa
+  participación…". Nuevo valor: **45.5%** (`src/lib/diploma/DiplomaDocument.tsx`).
+- Nota: el texto de respaldo del nombre del curso (`courseName`, 58%) quedaría encima
+  del texto fijo del diseño nuevo, pero solo se dibuja cuando falta el fondo dedicado
+  de un precongreso — no aparecerá una vez estén los 24 fondos.
+- El usuario compartió la Sheet; conexión verificada (lectura directa y vía
+  `/api/attendee` + `/api/diploma/download` con `npm run dev`). 328 filas de datos;
+  solo se usan `PC4` (66) y `PC6` (58) y todos los roles son asistente, por lo que
+  los 3 fondos ya colocados cubren a todos los asistentes actuales de la hoja.
+- Hallazgos en los datos, reportados al usuario (pendientes de su decisión):
+  - **Cruce PC4/PC6** (resuelto): en `Cursos`, PC4 = Ultrasonografía Ginecológica y
+    PC6 = Uroginecología, pero los PNG de PC4 y PC6 tenían los diseños al revés. El
+    usuario intercambió los nombres de los archivos; verificado regenerando ambos
+    diplomas desde la app.
+  - 62 filas sin correo (no podrán encontrar su diploma; `parseAttendees` las
+    descarta).
+  - 3 correos duplicados con nombres distintos (filas 118/119, 157/158, 303/304);
+    `findDiplomas` toma la primera coincidencia, así que la segunda persona de cada
+    par no puede obtener su diploma.
+  - 38 filas con correo, sin precongreso y `RolGeneral` = "Ninguno" → 0 diplomas.
+  - `RolPrecongreso` = "Ninguno" en filas sin precongreso: inofensivo (sin
+    `CodigoPrecongreso` no hay diploma de precongreso).
+
+<!-- BEGIN:nextjs-agent-rules -->
+
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
